@@ -13,10 +13,8 @@ namespace numth {
     }
     inline ll inv_exgcd(ll a, ll mod) { 
         auto [x, y, g] = exgcd(a, mod);
-        if (a == 0 || g != 1) return -1;
-        x %= mod;
-        if (x < 0) x += mod;
-        return x;
+        if (a == 0 || g != 1) return -1; // not exist
+        return norm(x, mod);
     }
 }
 /*---------------------------*/
