@@ -36,7 +36,7 @@ struct FwkTree {
         }
     }
 
-    // 单点更新
+    // 单点更新, O(log n)
     void add(int p, S x) {
         assert(0 <= p && p < n);
         for (p++; p <= n; p += _lowbit(p)) {
@@ -54,10 +54,12 @@ struct FwkTree {
         return res;
     }
 
-    // 区间查询, 需使用逆运算 O(log n), 左闭右开[l, r)
+    // 区间查询, 需使用逆运算, 左闭右开[l, r), O(log n)
     S sum(int l, int r) const {
         assert(0 <= l && l <= r && r <= n);
         return inv(sum(r - 1), sum(l - 1));
     }
 };
+template <class S = ll, S (*op)(S, S) = fw_default::op_add<S>, S (*e)() = fw_default::e_zero<S>, S (*inv)(S, S) = fw_default::inv_add<S>>
+using BIT = FwkTree<S, op, e, inv>;
 /*---------------------------*/

@@ -16,10 +16,10 @@ template <
     S (*mul)(S, int) = fw_default::op_mul<S>
 >
 struct FwkTree_range {
-    using BIT = FwkTree<S, op, e, inv>;
     int n;
-    BIT bit0;
-    BIT bit1;
+    using fwr = FwkTree<S, op, e, inv>;
+    fwr bit0;
+    fwr bit1;
 
     FwkTree_range() : n(0) {}
     FwkTree_range(int _n) : n(_n), bit0(_n), bit1(_n) {}
@@ -33,8 +33,8 @@ struct FwkTree_range {
             d1[i] = mul(diff, i);
             prev = arr[i];
         }
-        bit0 = BIT(d0);
-        bit1 = BIT(d1);
+        bit0 = fwr(d0);
+        bit1 = fwr(d1);
     }
 
     // 区间修改 [l, r) <- + val, O(log n)
