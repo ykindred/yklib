@@ -8,6 +8,7 @@ namespace fwt_ext {
     template <class fwtree>
     int kth(const fwtree& fwk, ll k) {
         int n = fwk.n;
+        assert(n > 0 && k > 0);
         if (n <= 0 || k <= 0) return -1;
         int pos = 0;
         int max_pow = 1 << (31 - __builtin_clz(n));
@@ -32,11 +33,11 @@ namespace fwt_ext {
     >
     int search(const FwkTree<S, op, e, inv>& fwk, F&& check) {
         int n = fwk.n;
-        if (n <= 0) return -1;
+        assert(n > 0);
+        assert(check(e) == true);
         int pos = 0;
         int max_pow = 1 << (31 - __builtin_clz(n));
         S cur = e();
-        if (!check(cur)) return -1;
         for (int i = max_pow; i > 0; i >>= 1) {
             if (pos + i <= n) {
                 S next_val = op(cur, fwk.d[pos + i]);
