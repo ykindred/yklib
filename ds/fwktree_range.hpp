@@ -1,5 +1,5 @@
+#pragma once
 #include "fwktree.hpp"
-
 /*-----fwktree_range.hpp-----*/
 namespace fw_default {
     // 默认数乘a * b

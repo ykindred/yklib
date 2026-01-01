@@ -1,5 +1,7 @@
 #pragma once
-#include "../head.hpp"
+#include <bits/stdc++.h>
+using ll = long long;
+using namespace std;
 /*--------fwktree.hpp--------*/
 // 默认为ll类型, 加法, 0, 减法
 namespace fw_default {

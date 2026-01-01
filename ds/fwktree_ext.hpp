@@ -1,3 +1,4 @@
+#pragma once
 #include "fwktree.hpp"
 /*------fwktree_ext.hpp------*/
 namespace fwt_ext {
