@@ -1,7 +1,8 @@
 #pragma once
-#include "../head.hpp"
+#include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
+using namespace std;
 
 template <typename T, typename Compare = less<T>>
 using pb_tree = __gnu_pbds::tree<T, __gnu_pbds::null_type, Compare, __gnu_pbds::rb_tree_tag, __gnu_pbds::tree_order_statistics_node_update>;

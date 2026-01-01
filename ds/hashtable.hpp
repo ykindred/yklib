@@ -1,9 +1,8 @@
 #pragma once
-#include "../head.hpp"
+#include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
-
-
+using namespace std;
 using __gnu_pbds::gp_hash_table;
 using __gnu_pbds::null_type;
 
@@ -44,13 +43,10 @@ struct chash {
         return splitmix64(hash + FIXED_RANDOM);
     }
 };
-
 // 使用方法: HashMap<int, int> mp;
 template<typename K, typename V>
 using HashMap = gp_hash_table<K, V, chash>;
-
 // 使用方法: HashSet<int> st;
 template<typename K>
 using HashSet = gp_hash_table<K, null_type, chash>;
-
 // 接口与unordered_set基本一致. 请注意最好不要使用count()

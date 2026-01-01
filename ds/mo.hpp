@@ -1,7 +1,5 @@
 #pragma once
 #include "../head.hpp"
-
-
 struct Mo {
     // 存储左闭右开区间 [L, R)
     vector<pair<int, int>> queries;

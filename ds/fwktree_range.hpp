@@ -68,4 +68,6 @@ struct FwkTree_range {
         return inv(sum(r - 1), sum(l - 1));
     }
 };
+template <class S = ll, S (*op)(S, S) = fw_default::op_add<S>, S (*e)() = fw_default::e_zero<S>, S (*inv)(S, S) = fw_default::inv_add<S>, S (*mul)(S, int) = fw_default::op_mul<S>>
+using DSU_range = FwkTree_range<S, op, e, inv, mul>;
 /*---------------------------*/

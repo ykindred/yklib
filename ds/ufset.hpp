@@ -72,3 +72,4 @@ struct UfSet {
         return result;
     }
 };
+using DSU = UfSet;
