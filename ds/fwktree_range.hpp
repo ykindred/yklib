@@ -1,18 +1,19 @@
 #include "fwktree.hpp"
 
+/*-----fwktree_range.hpp-----*/
 template <class S = ll>
 struct FwkTree_range {
+    using BIT = FwkTree<S>;
     int n;
-    FwkTree<S> bit0; // 维护 D[i]
-    FwkTree<S> bit1; // 维护 D[i] * i
+    BIT bit0; // 维护 D[i]
+    BIT bit1; // 维护 D[i] * i
 
     FwkTree_range() : n(0) {}
+    // O(n) 建树
     FwkTree_range(int _n) : n(_n), bit0(_n), bit1(_n) {}
-
-    // 建树 O(n)
-    FwkTree_range(const vector<S>& arr) : n(arr.size()), bit0(arr.size()), bit1(arr.size()) {
+    FwkTree_range(const vector<S>& arr) : n(arr.size()), bit0(n), bit1(n) {
         vector<S> d0(n), d1(n);
-        S prev = 0;
+        S prev = 0; 
         for (int i = 0; i < n; i++) {
             S diff = arr[i] - prev;
             d0[i] = diff;
@@ -23,7 +24,8 @@ struct FwkTree_range {
         bit1 = BIT(d1);
     }
 
-    // 对开区间 [l, r) + val, O(log n)
+    // 区间修改[l, r), 即A[l, r) <- A[l, r) + val
+    // [l, r) 包含于 [0, n), O(log n)
     void range_add(int l, int r, S val) {
         assert(0 <= l && l <= r && r <= n);
         if (l == r) return;
@@ -35,17 +37,20 @@ struct FwkTree_range {
         }
     }
 
-    // 求0到p的前缀和sum[0~p], O(log n)
-    S range_sum(int p) const {
-        assert(p < n);
-        if (p < 0) return 0; 
-        return bit0.sum(p) * S(p + 1) - bit1.sum(p);
+    // 前缀和S[idx], 即A[0, idx]
+    // idx 属于 [0, n), O(log n)
+    S sum(int idx) const {
+        assert(idx < n); 
+        if (idx < 0) return 0;
+        return bit0.sum(idx) * S(idx + 1) - bit1.sum(idx);
     }
 
-    // 区间查询 [l, r), O(log n)
-    S range_sum(int l, int r) const {
+    // 区间查询 [l, r), 即A[l, r)
+    // [l, r) 包含于 [0, n), O(log n)
+    S sum(int l, int r) const {
         assert(0 <= l && l <= r && r <= n);
         if (l == r) return 0;
-        return range_sum(r - 1) - range_sum(l - 1);
+        return sum(r - 1) - sum(l - 1);
     }
 };
+/*---------------------------*/
