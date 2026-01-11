@@ -1,6 +1,7 @@
 #pragma once
 #include "fwktree.hpp"
 /*------fwktree_ext.hpp------*/
+// 树状数组上二分
 namespace fwt_ext {
     // 查找权值树状数组上第k小元素的索引
     // 若总数不满k, 返回n
@@ -24,23 +25,17 @@ namespace fwt_ext {
     // 采用倍增查找满足check(pref[i]) = true的最大下标i.
     // check 单调谓词函数[T, ..., T, F, ..., F], 返回0-based下的最大下标. 
     // 若check(empty) = false, 返回-1
-    template <
-        class S, 
-        S (*op)(S, S), 
-        S (*e)(), 
-        S (*inv)(S, S),
-        typename F
-    >
-    int search(const FwkTree<S, op, e, inv>& fwk, F&& check) {
+    template <class S, typename F>
+    int search(const FwkTree<S>& fwk, F&& check) {
         int n = fwk.n;
         assert(n > 0);
-        assert(check(e) == true);
+        assert(check(0) == true);
         int pos = 0;
         int max_pow = 1 << (31 - __builtin_clz(n));
-        S cur = e();
+        S cur = 0;
         for (int i = max_pow; i > 0; i >>= 1) {
             if (pos + i <= n) {
-                S next_val = op(cur, fwk.d[pos + i]);
+                S next_val = cur + fwk.d[pos + i];
                 if (check(next_val)) {
                     pos += i;
                     cur = next_val;
@@ -50,4 +45,3 @@ namespace fwt_ext {
         return pos - 1;
     }
 }
-/*---------------------------*/

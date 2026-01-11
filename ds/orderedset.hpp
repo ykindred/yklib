@@ -3,49 +3,71 @@
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 using namespace std;
+using __gnu_pbds::tree;
+using __gnu_pbds::null_type;
+using __gnu_pbds::rb_tree_tag;
+using __gnu_pbds::tree_order_statistics_node_update;
 
-template <typename T, typename Compare = less<T>>
-using pb_tree = __gnu_pbds::tree<T, __gnu_pbds::null_type, Compare, __gnu_pbds::rb_tree_tag, __gnu_pbds::tree_order_statistics_node_update>;
+template<class T>
+struct OrderedSet {
+    using Tree = tree<T, null_type, std::less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+    Tree t;
 
-// 有序集
-template <typename T>
-struct ordered_set : public pb_tree<T> {
-    // 查询第k小元素, 返回值. 最小的元素是第0小
-    T kth(int k) {
-        assert(k >= 0 && k < (int)this->size());
-        return *this->find_by_order(k);
-    }
+    // 基础操作
+    void insert(T x) { t.insert(x); }
+    void erase(T x) { t.erase(x); }
+    int size() const { return t.size(); }
+    bool empty() const { return t.empty(); }
     
-    // 查x排名, 即严格小于x的元素的数量.
-    int rank(T x) {
-        return this->order_of_key(x);
+    // 排名查询
+    // 查询 x 的排名 (有多少个元素严格小于 x), 最小元素的排名是 0
+    int rank(T x) const { return t.order_of_key(x); }
+
+    // 第k小. 0-based, k=0返回最小元素
+    T kth(int k) const {
+        // assert(k >= 0 && k < size());
+        return *t.find_by_order(k);
     }
 
-    // 其他用法类似std::set
+    // 前驱, 严格小于x的最大元素, 不存在返回x
+    T prev(T x) const {
+        int rk = rank(x);
+        if (rk == 0) return x;
+        return kth(rk - 1);
+    }
+
+    // 后继, 严格大于x的最小元素, 不存在返回x
+    T next(T x) const {
+        int rk = rank(x + 1);
+        auto it = t.upper_bound(x);
+        if (it == t.end()) return x;
+        return *it;
+    }
 };
 
-// 多重集
-template <typename T>
-struct ordered_multiset {
-    pb_tree<pair<T, int>> t;
+template<class T>
+struct OrderedMultiset {
+    using P = std::pair<T, int>;
+    using Tree = tree<P, null_type, std::less<P>, rb_tree_tag, tree_order_statistics_node_update>;
+    Tree t;
     int timer = 0;
 
     void insert(T x) {
         t.insert({x, ++timer});
     }
 
-    // 删除一个值为 x 的元素
+    // 删除一个x(如果存在)
     void erase(T x) {
-        auto it = t.lower_bound({x, 0});
+        auto it = t.lower_bound({x, -1});
         if (it != t.end() && it->first == x) {
             t.erase(it);
         }
     }
-
-    // 删除所有值为 x 的元素
+    
+    // 删除所有x
     void erase_all(T x) {
         while (true) {
-            auto it = t.lower_bound({x, 0});
+            auto it = t.lower_bound({x, -1});
             if (it == t.end() || it->first != x) break;
             t.erase(it);
         }
@@ -54,19 +76,42 @@ struct ordered_multiset {
     int size() const { return t.size(); }
     bool empty() const { return t.empty(); }
 
-    // 查第k小元素, 0based
-    T kth(int k) {
-        assert(k >= 0 && k < (int)t.size());
+    // 第k小: 返回值
+    T kth(int k) const {
         return t.find_by_order(k)->first;
     }
 
-    // 查x排名
-    int rank(T x) {
-        return t.order_of_key({x, 0});
+    // 严格小于 x 的元素个数
+    int rank(T x) const {
+        return t.order_of_key({x, -1});
     }
 
-    // 查x的出现次数.
-    int count(T x) {
-        return t.order_of_key({x, (int)2e9}) - t.order_of_key({x, 0});
+    // x 出现的次数
+    int count(T x) const {
+        // 严格小于 (x+1) 的个数 - 严格小于 x 的个数
+        return t.order_of_key({x, 2147483647}) - t.order_of_key({x, -1});
+    }
+
+    // 严格小于 x 的最大元素
+    // 如果不存在，返回 x
+    T prev(T x) const {
+        int rk = rank(x);
+        if (rk == 0) return x; 
+        return kth(rk - 1);
+    }
+
+    // 严格大于 x 的最小元素
+    // 如果不存在，返回 x
+    T next(T x) const {
+        int rk = t.order_of_key({x, 2147483647});
+        if (rk == size()) return x;
+        return kth(rk);
+    }
+    
+    // 第一个 >= x 的元素值
+    T lower(T x) const {
+        auto it = t.lower_bound({x, -1});
+        if (it == t.end()) return x;
+        return it->first;
     }
 };

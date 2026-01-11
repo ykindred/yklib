@@ -1,16 +1,16 @@
 #pragma once
 #include "../head.hpp"
-/*--------dectree.hpp--------*/
+/*--------ctstree.hpp--------*/
 // 笛卡尔树 (Cartesian Tree), 可以完全代替单调栈
 // 默认 Compare = less<T> -> 大根堆 (Max-Tree) -> 维护区间最大值
 template <typename T, typename Compare = std::less<T>>
-struct DecTree {
+struct CtsTree {
     int n;
     int root;
     vector<int> ltc, rtc; // 左右孩子, 分别代表管辖区间内左右的次大(小)值.
     vector<int> L, R;     // 管辖区间 [L, R] (闭区间)
 
-    DecTree(const vector<T>& a, Compare cmp = Compare()) : n(a.size()) {
+    CtsTree(const vector<T>& a, Compare cmp = Compare()) : n(a.size()) {
         ltc.assign(n, -1);
         rtc.assign(n, -1);
         L.resize(n);
@@ -34,7 +34,9 @@ struct DecTree {
             stk.push_back(i);
         }
         root = stk.empty() ? -1 : stk[0];
-        if (root != -1) init_range(root);   // 与建树复杂度一致
+        if (root != -1) {
+            init_range(root);   // 与建树复杂度一致
+        }
     }
 
     // dfs预处理区间, O(n).
@@ -55,8 +57,3 @@ struct DecTree {
         return {L[i], R[i] + 1};
     }
 };
-template<typename T, class Compare = std::less<T>>
-using CartesianTree = DecTree<T, Compare>;
-template<typename T, class Compare = std::less<T>>
-using CtTree = DecTree<T, Compare>;
-/*---------------------------*/
