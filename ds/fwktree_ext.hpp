@@ -45,3 +45,4 @@ namespace fwt_ext {
         return pos - 1;
     }
 }
+/*---------------------------*/

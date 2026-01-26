@@ -1,5 +1,5 @@
 #include "../head.hpp"
-
+/*--------ufset.hpp----------*/
 // 并查集(Union-find Set)
 struct UfSet {
     int n;
@@ -73,3 +73,4 @@ struct UfSet {
     }
 };
 using DSU = UfSet;
+/*---------------------------*/

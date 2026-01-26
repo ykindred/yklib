@@ -27,3 +27,4 @@ template<typename K, typename V>
 using HashMap = gp_hash_table<K, V, chash>;
 template<typename K>
 using HashSet = gp_hash_table<K, null_type, chash>;
+/*---------------------------*/

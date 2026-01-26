@@ -1,5 +1,5 @@
 #include "../head.hpp"
-
+/*---------trie.hpp----------*/
 template <int sigma = 26, int off = 'a'>
 struct Trie {
     struct S {
@@ -55,3 +55,4 @@ struct Trie {
         return { d[p].cnt, d[p].siz };
     }
 };
+/*---------------------------*/

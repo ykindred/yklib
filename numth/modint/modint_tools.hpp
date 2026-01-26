@@ -48,7 +48,7 @@ template <typename mint>
 mint fact_inv(int n) {
     static vector<mint> dat = {1, 1};
     if (n < 0) return mint(0);
-    while (dat.size() <= n) dat.emplace_back(dat[dat.size() - 1] * inv<mint>(dat.size()));
+    while (dat.size() <= n) dat.emplace_back(dat[dat.size() - 1] * inv<mint>((int)dat.size()));
     return dat[n];
 }
 

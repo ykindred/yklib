@@ -1,6 +1,7 @@
 #pragma once
 #include "../../head.hpp"
 
+/*--------modint61.hpp-------*/
 // mod = (1ULL << 61) - 1, for rolling hash
 struct modint61 {
     static constexpr u64 mod = (1ULL << 61) - 1;
@@ -53,3 +54,4 @@ struct modint61 {
         return ret;
     }
 };
+/*---------------------------*/

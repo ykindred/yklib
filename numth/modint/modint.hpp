@@ -22,6 +22,7 @@ struct modint {
     // constructors
     constexpr modint() : val(0) {}
     constexpr modint(u32 x) : val(x % umod) {}
+    constexpr modint(unsigned long x) : val(x % umod) {}
     constexpr modint(u64 x) : val(x % umod) {}
     constexpr modint(u128 x) : val(x % umod) {}
     constexpr modint(int x) : val((x %= mod) < 0 ? x + mod : x) {};

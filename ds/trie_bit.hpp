@@ -1,5 +1,6 @@
 #include "../head.hpp"
 
+/*------trie_bit.hpp---------*/
 template <int LOG = 30, typename INT = int>
 struct Trie_bit {   
     struct S {
@@ -72,3 +73,4 @@ struct Trie_bit {
         return kth_xor(0, x);
     }
 };
+/*---------------------------*/

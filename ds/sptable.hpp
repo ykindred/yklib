@@ -29,3 +29,4 @@ struct SpTable {
         return op(st[j][l], st[j][r - (1 << j)]);
     }
 };
+/*---------------------------*/
