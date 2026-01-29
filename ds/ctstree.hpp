@@ -7,7 +7,7 @@ template <typename T, typename Compare = std::less<T>>
 struct CtsTree {
     int n;
     int root;
-    vector<int> ltc, rtc; // 左右孩子, 分别代表管辖区间内左右的次大(小)值.
+    vector<int> ltc, rtc; // 左右孩子, 分别代表左右的次大(小)值.
     vector<int> L, R;     // 管辖区间 [L, R] (闭区间)
 
     CtsTree(const vector<T>& a, Compare cmp = Compare()) : n(a.size()) {
@@ -40,21 +40,20 @@ struct CtsTree {
     }
 
     // dfs预处理区间, O(n).
-    void init_range(int u) {
-        if (ltc[u] != -1) {
-            init_range(ltc[u]);
-            L[u] = L[ltc[u]];
+    void init_range(int x) {
+        if (ltc[x] != -1) {
+            init_range(ltc[x]);
+            L[x] = L[ltc[x]];
         }
-        if (rtc[u] != -1) {
-            init_range(rtc[u]);
-            R[u] = R[rtc[u]];
+        if (rtc[x] != -1) {
+            init_range(rtc[x]);
+            R[x] = R[rtc[x]];
         }
     }
 
-    // 返回 [l, r) 左闭右开区间 (0-based), 总贡献为((i + 1) - l)(r - i)
-    // 即 [l, i + 1) 和 [i, r) 区间. O(1)
-    pair<int, int> range(int i) const {
-        return {L[i], R[i] + 1};
+    // 返回 [l, r) 左闭右开区间 (0-based), O(1)
+    array<int, 2> range(int i) const {
+        return { L[i], R[i] + 1 };
     }
 };
 /*---------------------------*/

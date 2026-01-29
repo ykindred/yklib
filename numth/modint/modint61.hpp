@@ -1,17 +1,14 @@
 #pragma once
 #include "../../head.hpp"
-
 /*--------modint61.hpp-------*/
-// mod = (1ULL << 61) - 1, for rolling hash
+// mod = (1ULL << 61) - 1, 便于rolling hash使用
 struct modint61 {
     static constexpr u64 mod = (1ULL << 61) - 1;
     u64 val;
     constexpr modint61() : val(0ULL) {}
-    constexpr modint61(u32 x) : val(x) {}
     constexpr modint61(u64 x) : val(x % mod) {}
     constexpr modint61(int x) : val((x < 0) ? (x + static_cast<ll>(mod)) : x) {}
     constexpr modint61(ll x) : val(((x %= static_cast<ll>(mod)) < 0) ? (x + static_cast<ll>(mod)) : x) {}
-    static constexpr u64 get_mod() { return mod; }
 
     modint61 &operator+=(const modint61 &a) {
         val = ((val += a.val) >= mod) ? (val - mod) : val;
@@ -28,19 +25,21 @@ struct modint61 {
         return *this;
     }
     modint61 operator-() const { return modint61(val ? mod - val : u64(0)); }
-    modint61 &operator/=(const modint61 &a) { return (*this *= a.inverse()); }
+    modint61 &operator/=(const modint61 &a) { return (*this *= a.inv()); }
     modint61 operator+(const modint61 &p) const { return modint61(*this) += p; }
     modint61 operator-(const modint61 &p) const { return modint61(*this) -= p; }
     modint61 operator*(const modint61 &p) const { return modint61(*this) *= p; }
     modint61 operator/(const modint61 &p) const { return modint61(*this) /= p; }
-    bool operator<(const modint61 &other) const { return val < other.val; }
     bool operator==(const modint61 &p) const { return val == p.val; }
     bool operator!=(const modint61 &p) const { return val != p.val; }
-    modint61 inverse() const {
+    modint61 inv() const {
         ll a = val, b = mod, u = 1, v = 0, t;
         while (b > 0) {
             t = a / b;
-            swap(a -= t * b, b), swap(u -= t * v, v);
+            a -= t * b;
+            u -= t * v;
+            swap(a, b);
+            swap(u, v);
         }
         return modint61(u);
     }

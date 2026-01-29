@@ -2,20 +2,22 @@
 #include "../head.hpp"
 /*--------segtree.hpp--------*/
 // 线段树(Segment Tree)
-// Info 要求包含:
-//     数据 = 空构造
-//     friend Info operator+(const Info&, const Info&)
-template<class Info>
+// S(info) 要求包含:
+//     数据 = 零元
+//     friend S operator+(const S&, const S&)
+// 初始化需要手动写出初始化数组.
+template<class S>
 struct SegTree {
     int n, size, log;
-    vector<Info> d;
-    void _pull(int x) {
+    vector<S> d;
+private:
+    void pull(int x) {
         d[x] = d[x * 2] + d[x * 2 + 1];
     }
 
-    // 对外接口
-    // 重新建树
-    void build(const vector<Info>& arr) {
+public:
+    // 重新建树, O(n)
+    void build(const vector<S>& arr) {
         n = arr.size();
         log = 0;
         size = 1;
@@ -23,46 +25,48 @@ struct SegTree {
             size *= 2;
             log++;
         }
-        d.assign(2 * size, Info());
+        d.assign(2 * size, S());
         for (int i = 0; i < n; i++) {
             d[size + i] = arr[i];
         }
         for (int i = size - 1; i > 0; i--) {
-            _pull(i);
+            pull(i);
         }
     }
 
-    SegTree(const vector<Info>& arr) {
+    SegTree(const vector<S>& arr) {
         build(arr);
-    }
-    SegTree(int _n, const Info& def = Info()) {
-        build(vector<Info>(_n, def));
     }
 
     // 单点赋值, O(log n)
-    void set(int x, const Info& val) {
-        assert(0 <= x && x < n);
-        x += size;
-        d[x] = val;
-        // 自底向上更新，无需 push
-        x /= 2;
-        for (; x > 0; x /= 2) {
-            _pull(x);
+    void set(int pos, const S& val) {
+        assert(0 <= pos && pos < n);
+        pos += size;
+        d[pos] = val;
+        pos /= 2;
+        for (; pos > 0; pos /= 2) {
+            pull(pos);
         }
+    }
+    
+    // 单点查询, O(1)
+    S get(int pos) {
+        assert(0 <= pos && pos < n);
+        return d[pos + size];
     }
 
     // 区间查询[lt, rt), O(log n)
-    Info query(int lt, int rt) {
+    S query(int lt, int rt) {
         assert(0 <= lt && lt <= rt && rt <= n);
         if (lt == rt) {
-            return Info();
+            return S();
         }
         if (lt + 1 == rt) {
             return d[size + lt];
         }
         lt += size;
         rt += size;
-        Info sumlt, sumrt;
+        S sumlt, sumrt;
         for (; lt < rt; lt /= 2, rt /= 2) {
             if (lt % 2 == 1) {
                 sumlt = sumlt + d[lt];
@@ -75,61 +79,67 @@ struct SegTree {
         }
         return sumlt + sumrt;
     }
+    // 扩展操作:
 
-    // 扩展接口
-    // 查最右rt使[lt, rt)满足check, 即第一个不满足check的下标. O(log n)
-    template <class F> 
-    int search_right(int lt, F check) {
-        if (lt == n) {
+    // 查找最大的r(l<=r<= n)使得check(const S& s)为真
+    // check(S())必须为true, O(log n)
+    template <class F>
+    int max_right(int l, F check) {
+        assert(0 <= l && l <= n);
+        assert(check(S()));
+        if (l == n) {
             return n;
         }
-        lt += size;
-        Info sum;
+        l += size;
+        S sum;
         do {
-            while (lt % 2 == 0) {
-                lt /= 2;
+            while (l % 2 == 0) {
+                l /= 2;
             }
-            if (!check(sum + d[lt])) {
-                while (lt < size) {
-                    lt *= 2;
-                    if (check(sum + d[lt])) {
-                        sum = sum + d[lt];
-                        lt++;
+            if (!check(sum + d[l])) {
+                while (l < size) {
+                    l *= 2;
+                    if (check(sum + d[l])) {
+                        sum = sum + d[l];
+                        l++;
                     }
                 }
-                return lt - size;
+                return l - size;
             }
-            sum = sum + d[lt];
-            lt++;
-        } while (lowbit(lt) != lt);
+            sum = sum + d[l];
+            l++;
+        } while (l != lowbit(l));
         return n;
     }
 
-    // 查最左lt使得[lt, rt)满足check, O(log n)
-    template <class F> 
-    int search_left(int rt, F check) {
-        if (rt == 0) {
+    // 查找最小的l(0<=l<=r)使得check(const S& s)为真
+    // check(S())必须为 true, O(log n)
+    template <class F>
+    int min_left(int r, F check) {
+        assert(0 <= r && r <= n);
+        assert(check(S()));
+        if (r == 0) {
             return 0;
         }
-        rt += size;
-        Info sum;
+        r += size;
+        S sum;
         do {
-            rt--;
-            while (rt > 1 && rt % 2 == 1) {
-                rt /= 2;
+            r--;
+            while (r > 1 && (r % 2)) {
+                r /= 2;
             }
-            if (!check(d[rt] + sum)) {
-                while (rt < size) {
-                    rt = 2 * rt + 1;
-                    if (check(d[rt] + sum)) {
-                        sum = d[rt] + sum;
-                        rt--;
+            if (!check(d[r] + sum)) {
+                while (r < size) {
+                    r = 2 * r + 1;
+                    if (check(d[r] + sum)) {
+                        sum = d[r] + sum;
+                        r--;
                     }
                 }
-                return rt + 1 - size;
+                return r + 1 - size;
             }
-            sum = d[rt] + sum;
-        } while (lowbit(rt) != rt);
+            sum = d[r] + sum;
+        } while (r != lowbit(r));
         return 0;
     }
 };

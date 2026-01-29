@@ -1,19 +1,21 @@
 #include "../head.hpp"
-
+/*--------sptable.hpp--------*/
 // 稀疏表, Sparse Table.
-// T为数据类型, op为一个函数指针, 默认产生区间最小值
-template <typename T, T (*op)(T, T) = std::min>
+// S为数据类型, 要求定义friend S op(const S& a, const S& b), 要求满足幂等性
+template <typename S>
 struct SpTable {
     int n;
     int max_log;
-    vector<vector<T>> st;
+    vector<vector<S>> st;
 
-    SpTable(const vector<T>& a) : n(a.size()) {
-        if (n == 0) return;
+    SpTable(const vector<S>& a) : n(a.size()) {
+        assert(n > 0);
         max_log = 32 - __builtin_clz(n);
-        st.assign(max_log, vector<T>(n));
+        st.assign(max_log, vector<S>(n));
 
-        for (int i = 0; i < n; i++) st[0][i] = a[i];
+        for (int i = 0; i < n; i++) {
+            st[0][i] = a[i];
+        }
 
         for (int j = 1; j < max_log; j++) {
             for (int i = 0; i + (1 << j) <= n; i++) {
@@ -22,8 +24,8 @@ struct SpTable {
         }
     }
 
-    // 查询区间 [l, r) 的结果: O(1)
-    T prod(int l, int r) const {
+    // 查询区间[l, r), O(1)
+    S query(int l, int r) const {
         assert(0 <= l && l < r && r <= n);
         int j = 31 - __builtin_clz(r - l);
         return op(st[j][l], st[j][r - (1 << j)]);

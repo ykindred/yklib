@@ -1,7 +1,7 @@
 #pragma once
 #include "../head.hpp"
 /*---------tools.hpp---------*/
-// basic tools for ring of residue class, mod should be prime
+// 简单的剩余类环
 namespace numth {
     inline ll norm(ll x, ll mod) { return ((x %= mod) < 0) ? (x + mod) : x; }
     inline ll mul(ll a, ll b, ll mod) { auto tmp = (i128)a * b % mod; return (tmp < 0) ? (tmp + mod) : tmp; }

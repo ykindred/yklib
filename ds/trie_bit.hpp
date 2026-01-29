@@ -1,6 +1,5 @@
 #include "../head.hpp"
-
-/*------trie_bit.hpp---------*/
+/*-------trie_bit.hpp--------*/
 template <int LOG = 30, typename INT = int>
 struct Trie_bit {   
     struct S {
